@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "aG5cX1vq+Dw=",
+  "success": true,
+  "projectFilePath": "C:\\repos\\Withdrawals_External_API_Mock\\HumanRe\\HumanRe.Server\\HumanRe.Server.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\LungisaniN\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.5\\microsoft.aspnetcore.openapi.9.0.5.nupkg.sha512",
+    "C:\\Users\\LungisaniN\\.nuget\\packages\\microsoft.aspnetcore.spaproxy\\9.0.8\\microsoft.aspnetcore.spaproxy.9.0.8.nupkg.sha512",
+    "C:\\Users\\LungisaniN\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}

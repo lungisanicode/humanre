@@ -1,0 +1,1 @@
+C:\repos\Withdrawals_External_API_Mock\HumanRe\humanre.client\obj\Debug\humanre.client.esproj.CoreCompileInputs.cache

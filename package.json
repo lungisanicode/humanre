@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "cross-env": "^10.0.0",
+    "run-script-os": "^1.1.6"
+  }
+}
