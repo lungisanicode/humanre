@@ -1,4 +1,5 @@
 ﻿using HumanRe.Server.Repositories.Interfaces;
+using HumanRe.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HumanRe.Server.Controllers
@@ -16,6 +17,11 @@ namespace HumanRe.Server.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LogIntoSystem([FromBody] string email)
         {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest("Email is required");
+            }
+
             var employee = await _leaverepository.LogIntoSystemAsync(email);
             if (employee == null)
                 return Unauthorized("Employee not found");

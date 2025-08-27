@@ -4,6 +4,6 @@ namespace HumanRe.Server.Repositories.Interfaces
 {
     public interface ILeaveSystemRepository
     {
-        Task<Employee> LogIntoSystemAsync(string email);
+        Task<Employee?> LogIntoSystemAsync(string email);
     }
 }

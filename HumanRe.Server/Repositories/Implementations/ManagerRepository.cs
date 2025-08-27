@@ -35,7 +35,7 @@ namespace HumanRe.Server.Repositories.Implementations
                     existingRequest.IsRejected = false;
                     existingRequest.ApprovedById = request.ApprovedById;
                     existingRequest.ApprovalDate = DateTime.UtcNow;
-                    existingRequest.RejectionReason = null;
+                    existingRequest.RejectionReason = string.Empty;
                 }
                 else if (request.IsRejected)
                 {

@@ -16,7 +16,7 @@ namespace HumanRe.Server.Repositories.Implementations
             _resourceContext = context;
         }
 
-        public async Task<Employee> LogIntoSystemAsync(string email)
+        public async Task<Employee?> LogIntoSystemAsync(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
                 throw new ArgumentException("Email cannot be empty", nameof(email));
@@ -29,7 +29,7 @@ namespace HumanRe.Server.Repositories.Implementations
                 if (employee == null)
                 {
                     _logger.LogWarning("Login attempt failed. No employee found with email: {Email}", email);
-                    return new Employee();
+                    return null;
                 }
 
                 _logger.LogInformation("Employee {EmployeeId} logged in successfully", employee.Id);
