@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/HumanRe.Server/bin/Debug/net9.0
+/HumanRe.Server/obj
+/.vs/HumanRe
