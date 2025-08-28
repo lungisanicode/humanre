@@ -19,7 +19,11 @@ export class EmployeeComponent implements OnInit {
 
   newStart = '';
   newEnd = '';
-  newReason = 'Annual Leave'; 
+  newReason = 'Annual Leave';
+
+  isEditing = false;
+  editingRequest: LeaveRequest | null = null;
+  rectractiontRequest: LeaveRequest | null = null;
 
   constructor(
     private readonly leaveService: LeaveService,
@@ -44,26 +48,23 @@ export class EmployeeComponent implements OnInit {
   private calculateWeekdays(start: string, end: string): number {
     const startDate = new Date(start);
     const endDate = new Date(end);
-  
+
     if (endDate < startDate) return 0;
-  
+
     let count = 0;
     let current = new Date(startDate);
-  
+
     while (current <= endDate) {
       const day = current.getDay();
-      if (day !== 0 && day !== 6) { 
-        count++;
-      }
+      if (day !== 0 && day !== 6) count++;
       current.setDate(current.getDate() + 1);
     }
-  
+
     return count;
   }
-  
+
   create(): void {
     const currentUser = this.authService.currentUser;
-    console.log(currentUser);
     if (!currentUser) {
       this.errorMessage = 'You must be logged in to create a leave request.';
       return;
@@ -74,8 +75,8 @@ export class EmployeeComponent implements OnInit {
       employeeId: currentUser.id,
       startDate: new Date(this.newStart).toISOString(),
       endDate: new Date(this.newEnd).toISOString(),
-      numberOfDays: numberOfDays,
-      reason: 'Annual Leave',
+      numberOfDays,
+      reason: this.newReason,
       isApproved: false,
       isRejected: false,
       isWithdrawn: false,
@@ -85,7 +86,6 @@ export class EmployeeComponent implements OnInit {
       approvalDate: null,
       rejectionReason: ''
     };
-    
 
     this.leaveService.addLeaveRequest(request).subscribe({
       next: () => {
@@ -97,12 +97,55 @@ export class EmployeeComponent implements OnInit {
   }
 
   retract(req: LeaveRequest): void {
-    this.leaveService.retractLeaveRequest(req.id as unknown as string).subscribe({
+    
+    this.rectractiontRequest = { ...req };
+    this.rectractiontRequest.isWithdrawn = true;
+    this.rectractiontRequest.status = 'Withdrawn';
+
+    this.leaveService.updateLeaveRequest(this.rectractiontRequest).subscribe({
       next: () => this.refresh(),
       error: err => {
         console.error(err);
-        this.errorMessage = 'Failed to retract request.';
+        this.errorMessage = 'Failed to retract the request.';
       }
     });
+  }
+
+  edit(req: LeaveRequest): void {
+    this.isEditing = true;
+    this.editingRequest = { ...req }; 
+    this.newStart = this.editingRequest.startDate.split('T')[0];
+    this.newEnd = this.editingRequest.endDate.split('T')[0];
+  }
+
+  saveEdit(): void {
+    if (!this.editingRequest) return;
+
+    const numberOfDays = this.calculateWeekdays(this.newStart, this.newEnd);
+    this.editingRequest.startDate = new Date(this.newStart).toISOString();
+    this.editingRequest.endDate = new Date(this.newEnd).toISOString();
+    this.editingRequest.numberOfDays = numberOfDays;
+    this.editingRequest.reason = this.newReason;
+    this.editingRequest.modifiedDate = new Date().toISOString();
+
+    this.leaveService.updateLeaveRequest(this.editingRequest).subscribe({
+      next: () => {
+        this.isEditing = false;
+        this.editingRequest = null;
+        this.newStart = this.newEnd = '';
+        this.refresh();
+      },
+      error: err => {
+        console.error(err);
+        this.errorMessage = 'Failed to update the leave request.';
+      }
+    });
+  }
+
+  cancelEdit(): void {
+    this.isEditing = false;
+    this.editingRequest = null;
+    this.newStart = this.newEnd = '';
+    this.newReason = 'Annual Leave';
   }
 }

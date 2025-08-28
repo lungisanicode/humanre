@@ -1,4 +1,6 @@
-﻿namespace HumanRe.Server.Models
+﻿using System.Text.Json.Serialization;
+
+namespace HumanRe.Server.Models
 {
     public class LeaveRequest
     {
@@ -17,7 +19,9 @@
         public int? ApprovedById { get; set; }
         public DateTime? ApprovalDate { get; set; }
         public string RejectionReason { get; set; }
-        public Employee Employee { get; set; }
-        public Employee ApprovedBy { get; set; }
+        [JsonIgnore]
+        public Employee? Employee { get; set; }
+        [JsonIgnore]
+        public Employee? ApprovedBy { get; set; }
     }
 }

@@ -5,6 +5,7 @@ export interface LeaveRequest {
   endDate: string;
   numberOfDays: number;
   reason?: string;
+  status: string;
   isApproved: boolean;
   isRejected: boolean;
   isWithdrawn: boolean;

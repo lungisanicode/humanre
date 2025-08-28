@@ -1,40 +1,66 @@
 <div class="employee-container">
-    <!-- Left: Leave List -->
-    <div class="leave-list">
-      <h2>My Leave Requests</h2>
-      <button (click)="refresh()">Refresh</button>
-  
-      <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
-  
-      <ul *ngIf="leaveRequests.length; else noRequests">
-        <li *ngFor="let req of leaveRequests">
-          <strong>{{ req.reason || 'No reason' }}</strong>
-          ({{ req.startDate }} → {{ req.endDate }})
-          <span *ngIf="req.isApproved">✅ Approved</span>
-          <span *ngIf="req.isRejected">❌ Rejected</span>
-          <span *ngIf="!req.isApproved && !req.isRejected && !req.isWithdrawn">⏳ Pending</span>
-          <span *ngIf="req.isWithdrawn">🚫 Withdrawn</span>
-          <button *ngIf="!req.isApproved && !req.isRejected && !req.isWithdrawn" (click)="retract(req)">
-            Retract
-          </button>
-        </li>
-      </ul>
-  
-      <ng-template #noRequests><p>No leave requests.</p></ng-template>
-    </div>
-  
-    <!-- Right: Create Form -->
-    <div class="leave-form">
-      <h2>Apply for Annual Leave</h2>
-      <form (ngSubmit)="create()">
+  <!-- Left: Leave List -->
+  <div class="leave-list">
+    <h2>My Leave Requests</h2>
+    <button (click)="refresh()">Refresh</button>
+
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+    <ul *ngIf="leaveRequests.length; else noRequests">
+      <li *ngFor="let req of leaveRequests">
+        <strong>{{ req.reason || 'No reason' }}</strong>
+        ({{ req.startDate }} → {{ req.endDate }})
+        <span *ngIf="req.isApproved">✅ Approved</span>
+        <span *ngIf="req.isRejected">❌ Rejected</span>
+        <span *ngIf="!req.isApproved && !req.isRejected && !req.isWithdrawn">⏳ Pending</span>
+        <span *ngIf="req.isWithdrawn">🚫 Withdrawn</span>
+
+        <button *ngIf="!req.isApproved && !req.isRejected && !req.isWithdrawn" (click)="retract(req)">
+          Retract
+        </button>
+        <button *ngIf="!req.isApproved && !req.isRejected && !req.isWithdrawn" (click)="edit(req)">
+          Update
+        </button>
+      </li>
+    </ul>
+
+    <ng-template #noRequests><p>No leave requests.</p></ng-template>
+  </div>
+
+  <!-- Right: Always Visible Create Form -->
+  <div class="leave-form">
+    <h2>Apply for Annual Leave</h2>
+    <form (ngSubmit)="create()">
+      <label>Start Date</label>
+      <input type="date" [(ngModel)]="newStart" name="start" required />
+
+      <label>End Date</label>
+      <input type="date" [(ngModel)]="newEnd" name="end" required />
+
+      <label>Reason</label>
+      <input type="text" [(ngModel)]="newReason" name="reason" required />
+
+      <button type="submit">Add Leave</button>
+    </form>
+  </div>
+
+  <!-- Edit Modal Overlay -->
+  <div class="modal-backdrop" *ngIf="isEditing">
+    <div class="modal">
+      <h2>Edit Leave Request</h2>
+      <form (ngSubmit)="saveEdit()">
         <label>Start Date</label>
-        <input type="date" [(ngModel)]="newStart" name="start" required />
-  
+        <input type="date" [(ngModel)]="newStart" name="modalStart" required />
+
         <label>End Date</label>
-        <input type="date" [(ngModel)]="newEnd" name="end" required />
-  
-        <button type="submit">Add Leave</button>
+        <input type="date" [(ngModel)]="newEnd" name="modalEnd" required />
+
+        <label>Reason</label>
+        <input type="text" [(ngModel)]="newReason" name="modalReason" required />
+
+        <button type="submit">Save</button>
+        <button type="button" (click)="cancelEdit()">Cancel</button>
       </form>
     </div>
   </div>
-  
+</div>
