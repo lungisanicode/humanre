@@ -68,7 +68,6 @@ namespace HumanRe.Server.Repositories.Implementations
             {
                 var requests = await _context.LeaveRequests
                     .Include(lr => lr.Employee)
-                    .Include(lr => lr.LeaveType)
                     .Include(lr => lr.ApprovedBy)
                     .Where(lr => lr.ApprovedById == managerId || (!lr.IsApproved && !lr.IsRejected))
                     .OrderByDescending(lr => lr.CreatedDate)

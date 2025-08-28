@@ -7,9 +7,11 @@ import { map, catchError } from 'rxjs/operators';
 
 export interface AuthUser extends Pick<Employee, 'id' | 'fullName' | 'emailAddress' | 'isManager'> {}
 
+const AUTH_STORAGE_KEY = 'hr_current_user';
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly currentUserSubject = new BehaviorSubject<AuthUser | null>(null);
+  private readonly currentUserSubject = new BehaviorSubject<AuthUser | null>(this.readFromStorage());
   readonly currentUser$: Observable<AuthUser | null> = this.currentUserSubject.asObservable();
 
   constructor(private readonly router: Router, private readonly http: HttpClient) {}
@@ -25,7 +27,7 @@ export class AuthService {
   login(emailAddress: string): Observable<AuthUser> {
     return this.http.post<Employee>(
       `http://localhost:5132/api/System/login`,
-      `"${emailAddress}"`, 
+      `"${emailAddress}"`,
       { headers: { 'Content-Type': 'application/json' } }
     ).pipe(
       map((employee: Employee) => {
@@ -35,6 +37,7 @@ export class AuthService {
           emailAddress: employee.emailAddress,
           isManager: employee.isManager
         };
+        this.persist(authUser);
         this.currentUserSubject.next(authUser);
         return authUser;
       }),
@@ -46,7 +49,21 @@ export class AuthService {
   }
 
   logout(): void {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
     this.currentUserSubject.next(null);
-    this.router.navigate(['/']); // optional: redirect to login
+    this.router.navigate(['/']); 
+  }
+
+  private persist(user: AuthUser): void {
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+  }
+
+  private readFromStorage(): AuthUser | null {
+    try {
+      const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+      return raw ? (JSON.parse(raw) as AuthUser) : null;
+    } catch {
+      return null;
+    }
   }
 }

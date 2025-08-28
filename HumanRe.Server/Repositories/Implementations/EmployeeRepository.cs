@@ -76,7 +76,6 @@ public class EmployeeRepository : IEmployeeRepository
                 throw new InvalidOperationException("Cannot update a processed leave request");
             }
 
-            existingRequest.LeaveTypeId = leaveRequest.LeaveTypeId;
             existingRequest.StartDate = leaveRequest.StartDate;
             existingRequest.EndDate = leaveRequest.EndDate;
             existingRequest.NumberOfDays = leaveRequest.NumberOfDays;
@@ -98,7 +97,6 @@ public class EmployeeRepository : IEmployeeRepository
         try
         {
             var requests = await _resourceContext.LeaveRequests
-                .Include(lr => lr.LeaveType)
                 .Include(lr => lr.ApprovedBy)
                 .Include(lr => lr.Employee)
                 .OrderByDescending(lr => lr.CreatedDate)

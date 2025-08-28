@@ -9,7 +9,6 @@ namespace HumanRe.Server.Middleware
 
         public DbSet<Team> Teams { get; set; }
         public DbSet<Employee> Employees { get; set; }
-        public DbSet<LeaveType> LeaveTypes { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<PublicHoliday> PublicHolidays { get; set; }
 
@@ -21,20 +20,13 @@ namespace HumanRe.Server.Middleware
                 .HasOne(lr => lr.Employee)
                 .WithMany(e => e.LeaveRequests)
                 .HasForeignKey(lr => lr.EmployeeId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<LeaveRequest>()
                 .HasOne(lr => lr.ApprovedBy)
                 .WithMany()
                 .HasForeignKey(lr => lr.ApprovedById)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<LeaveRequest>()
-                .HasOne(lr => lr.LeaveType)
-                .WithMany()
-                .HasForeignKey(lr => lr.LeaveTypeId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
-
     }
 }

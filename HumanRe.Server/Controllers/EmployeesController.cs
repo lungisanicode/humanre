@@ -20,12 +20,34 @@ public class EmployeesController : ControllerBase
         return Ok(requests);
     }
 
-    [HttpPost("leave-requests")]
-    public async Task<IActionResult> AddLeaveRequest([FromBody] LeaveRequest leaveRequest)
+    [HttpPost("addleaverequest")]
+    public async Task<IActionResult> AddLeaveRequest([FromBody] AddLeaveRequestObject requestDto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var leaveRequest = new LeaveRequest
+        {
+            EmployeeId = requestDto.EmployeeId,
+            StartDate = requestDto.StartDate,
+            EndDate = requestDto.EndDate,
+            NumberOfDays = requestDto.NumberOfDays,
+            Reason = requestDto.Reason,
+            IsApproved = requestDto.IsApproved,
+            IsRejected = requestDto.IsRejected,
+            IsWithdrawn = requestDto.IsWithdrawn,
+            CreatedDate = requestDto.CreatedDate,
+            ModifiedDate = requestDto.ModifiedDate,
+            ApprovedById = requestDto.ApprovedById,
+            ApprovalDate = requestDto.ApprovalDate,
+            RejectionReason = requestDto.RejectionReason
+        };
+
         await _employeeRepository.AddLeaveRequestAsync(leaveRequest);
+
         return CreatedAtAction(nameof(ViewLeaveRequests), new { id = leaveRequest.Id }, leaveRequest);
     }
+
 
     [HttpPut("leave-requests")]
     public async Task<IActionResult> UpdateLeaveRequest([FromBody] LeaveRequest leaveRequest)
