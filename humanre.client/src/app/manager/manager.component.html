@@ -1,0 +1,61 @@
+<div class="manager-container">
+    <h2>Team Leave Requests</h2>
+  
+    <div class="view-switch">
+      <button [class.active]="view === 'all'" (click)="switchView('all')">
+        📋 All Requests
+      </button>
+      <button [class.active]="view === 'actions'" (click)="switchView('actions')">
+        ✅ Approvals
+      </button>
+      <button class="refresh-btn" (click)="refresh()">🔄 Refresh</button>
+    </div>
+  
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  
+    <div *ngIf="view === 'all'">
+      <ul *ngIf="leaveRequests.length; else noRequests">
+        <li *ngFor="let req of leaveRequests" class="request-card">
+          <div class="req-header">
+            <strong>{{ req.reason || 'No reason provided' }}</strong>
+          </div>
+          <div class="req-dates">
+            {{ req.startDate }} → {{ req.endDate }}
+          </div>
+          <div class="req-status">
+            <span *ngIf="req.isApproved" class="approved">✅ Approved</span>
+            <span *ngIf="req.isRejected" class="rejected">❌ Rejected</span>
+            <span *ngIf="!req.isApproved && !req.isRejected && !req.isWithdrawn" class="pending">
+              ⏳ Pending
+            </span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  
+    <div *ngIf="view === 'actions'">
+      <ul *ngIf="leaveRequests.length; else noRequests">
+        <li *ngFor="let req of leaveRequests" class="request-card">
+          <div class="req-header">
+            <strong>{{ req.reason || 'No reason provided' }}</strong>
+          </div>
+          <div class="req-dates">
+            {{ req.startDate }} → {{ req.endDate }}
+          </div>
+          <div class="req-actions" *ngIf="!req.isApproved && !req.isRejected">
+            <button class="approve-btn" (click)="approve(req)">Approve</button>
+            <button class="reject-btn" (click)="reject(req)">Reject</button>
+          </div>
+          <div class="req-status" *ngIf="req.isApproved || req.isRejected">
+            <span *ngIf="req.isApproved" class="approved">✅ Approved</span>
+            <span *ngIf="req.isRejected" class="rejected">❌ Rejected</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  
+    <ng-template #noRequests>
+      <p class="empty">No team leave requests.</p>
+    </ng-template>
+  </div>
+  

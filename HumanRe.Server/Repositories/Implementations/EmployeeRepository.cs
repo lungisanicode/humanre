@@ -80,6 +80,10 @@ public class EmployeeRepository : IEmployeeRepository
             existingRequest.EndDate = leaveRequest.EndDate;
             existingRequest.NumberOfDays = leaveRequest.NumberOfDays;
             existingRequest.Reason = leaveRequest.Reason;
+            existingRequest.Status = leaveRequest.Status;
+            existingRequest.IsApproved = leaveRequest.IsApproved;
+            existingRequest.IsRejected = leaveRequest.IsRejected;
+            existingRequest.IsWithdrawn = leaveRequest.IsWithdrawn;
             existingRequest.ModifiedDate = DateTime.UtcNow;
 
             await _resourceContext.SaveChangesAsync();

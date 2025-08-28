@@ -8,44 +8,32 @@ import { AuthService } from '../../../services/auth';
   selector: 'app-manager',
   standalone: true,
   imports: [CommonModule],
-  template: `
-  <div class="container">
-    <h2>Team Leave Requests</h2>
-    <button (click)="refresh()">Refresh</button>
-
-    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
-
-    <ul *ngIf="leaveRequests.length; else noRequests">
-      <li *ngFor="let req of leaveRequests">
-        <strong>{{ req.reason || 'No reason' }}</strong>
-        ({{ req.startDate }} → {{ req.endDate }})
-        <span *ngIf="req.isApproved">✅ Approved</span>
-        <span *ngIf="req.isRejected">❌ Rejected</span>
-        <span *ngIf="!req.isApproved && !req.isRejected && !req.isWithdrawn">⏳ Pending</span>
-        <button *ngIf="!req.isApproved && !req.isRejected" (click)="approve(req)">Approve</button>
-        <button *ngIf="!req.isApproved && !req.isRejected" (click)="reject(req)">Reject</button>
-      </li>
-    </ul>
-
-    <ng-template #noRequests><p>No team requests.</p></ng-template>
-  </div>
-  `,
+  templateUrl: './manager.component.html',
+  styleUrls: ['./manager.component.css']
 })
 export class ManagerComponent implements OnInit {
   leaveRequests: LeaveRequest[] = [];
   errorMessage: string | null = null;
+  view: 'all' | 'actions' = 'all'; 
 
-  constructor(private readonly leaveService: LeaveService, private readonly auth: AuthService) {}
+  constructor(
+    private readonly leaveService: LeaveService,
+    private readonly auth: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.refresh();
+  }
+
+  switchView(view: 'all' | 'actions'): void {
+    this.view = view;
   }
 
   refresh(): void {
     this.errorMessage = null;
     const managerId = this.auth.currentUser?.id ?? 0;
     this.leaveService.viewManagerLeaveRequests(managerId).subscribe({
-      next: reqs => this.leaveRequests = reqs,
+      next: reqs => (this.leaveRequests = reqs),
       error: err => {
         console.error(err);
         this.errorMessage = 'Failed to load team requests.';
@@ -54,7 +42,7 @@ export class ManagerComponent implements OnInit {
   }
 
   approve(req: LeaveRequest): void {
-    const updated: LeaveRequest = { ...req, isApproved: true, isRejected: false };
+    const updated: LeaveRequest = { ...req, isApproved: true, isRejected: false, status: 'Approved' };
     this.leaveService.actionLeaveRequest(updated).subscribe({
       next: () => this.refresh(),
       error: err => {
@@ -65,7 +53,7 @@ export class ManagerComponent implements OnInit {
   }
 
   reject(req: LeaveRequest): void {
-    const updated: LeaveRequest = { ...req, isApproved: false, isRejected: true };
+    const updated: LeaveRequest = { ...req, isApproved: false, isRejected: true, status: 'Rejected' };
     this.leaveService.actionLeaveRequest(updated).subscribe({
       next: () => this.refresh(),
       error: err => {
@@ -74,4 +62,4 @@ export class ManagerComponent implements OnInit {
       }
     });
   }
-} 
+}

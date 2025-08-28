@@ -36,14 +36,18 @@ export class EmployeeComponent implements OnInit {
 
   refresh(): void {
     this.errorMessage = null;
+    const employeeId = this.authService.currentUser?.id ?? 0;
+  
     this.leaveService.viewLeaveRequests().subscribe({
-      next: reqs => this.leaveRequests = reqs,
+      next: reqs => {
+        this.leaveRequests = reqs.filter(r => r.employeeId === employeeId);
+      },
       error: err => {
         console.error(err);
         this.errorMessage = 'Failed to load leave requests. Please try again.';
       }
     });
-  }
+  }  
 
   private calculateWeekdays(start: string, end: string): number {
     const startDate = new Date(start);
@@ -100,7 +104,7 @@ export class EmployeeComponent implements OnInit {
     
     this.rectractiontRequest = { ...req };
     this.rectractiontRequest.isWithdrawn = true;
-    this.rectractiontRequest.status = 'Withdrawn';
+    this.rectractiontRequest.status = 'Cancelled';
 
     this.leaveService.updateLeaveRequest(this.rectractiontRequest).subscribe({
       next: () => this.refresh(),
