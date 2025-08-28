@@ -7,31 +7,33 @@ import { LeaveRequest } from './../interfaces/LeaveRequest';
   providedIn: 'root',
 })
 export class LeaveService {
-  private readonly apiUrl: string = 'https://localhost:7000/api';
+  private readonly apiUrl = 'http://localhost:5132/api';
 
-  constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient) {}
 
+  // Employees
   addLeaveRequest(request: LeaveRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/employee/addleaverequest`, request);
+    return this.http.post(`${this.apiUrl}/employees/leave-requests`, request);
   }
 
   updateLeaveRequest(request: LeaveRequest): Observable<any> {
-    return this.http.put(`${this.apiUrl}/employee/updateleaverequest`, request);
+    return this.http.put(`${this.apiUrl}/employees/leave-requests`, request);
   }
 
-  retractLeaveRequest(id: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/employee/retractleaverequest/${id}`, {});
+  retractLeaveRequest(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/employees/leave-requests/${id}`);
   }
 
   viewLeaveRequests(): Observable<LeaveRequest[]> {
-    return this.http.get<LeaveRequest[]>(`${this.apiUrl}/employee/viewleaverequests`);
+    return this.http.get<LeaveRequest[]>(`${this.apiUrl}/employees/leave-requests`);
   }
 
+  // Managers
   viewManagerLeaveRequests(managerId: number): Observable<LeaveRequest[]> {
-    return this.http.get<LeaveRequest[]>(`${this.apiUrl}/manager/viewleaverequests/${managerId}`);
+    return this.http.get<LeaveRequest[]>(`${this.apiUrl}/managers/${managerId}/leave-requests`);
   }
 
   actionLeaveRequest(request: LeaveRequest): Observable<any> {
-    return this.http.put(`${this.apiUrl}/manager/actionleaverequest`, request);
+    return this.http.post(`${this.apiUrl}/managers/leave-requests/action`, request);
   }
 }

@@ -1,46 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LeaveService } from '../../services/leave';
-import { LeaveRequest } from '../../interfaces/LeaveRequest';
+import { LeaveService } from '../../../services/leave';
+import { LeaveRequest } from '../../../interfaces/LeaveRequest';
 
 @Component({
   selector: 'app-employee',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-  <div class="container">
-    <h2>My Leave Requests</h2>
-    <button (click)="refresh()">Refresh</button>
-
-    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
-
-    <form (ngSubmit)="create()" style="margin: 1rem 0;">
-      <label>Start</label>
-      <input type="date" [(ngModel)]="newStart" name="start" required />
-      <label>End</label>
-      <input type="date" [(ngModel)]="newEnd" name="end" required />
-      <input type="text" [(ngModel)]="newReason" name="reason" placeholder="Reason" />
-      <button type="submit">Add</button>
-    </form>
-
-    <ul *ngIf="leaveRequests.length; else noRequests">
-      <li *ngFor="let req of leaveRequests">
-        <strong>{{ req.reason || 'No reason' }}</strong>
-        ({{ req.startDate }} → {{ req.endDate }})
-        <span *ngIf="req.isApproved">✅ Approved</span>
-        <span *ngIf="req.isRejected">❌ Rejected</span>
-        <span *ngIf="!req.isApproved && !req.isRejected && !req.isWithdrawn">⏳ Pending</span>
-        <span *ngIf="req.isWithdrawn">🚫 Withdrawn</span>
-        <button *ngIf="!req.isApproved && !req.isRejected && !req.isWithdrawn" (click)="retract(req)">
-          Retract
-        </button>
-      </li>
-    </ul>
-
-    <ng-template #noRequests><p>No leave requests.</p></ng-template>
-  </div>
-  `,
+  templateUrl: './employee.component.html',
+  styleUrls: ['./employee.component.css']
 })
 export class EmployeeComponent implements OnInit {
   leaveRequests: LeaveRequest[] = [];
@@ -75,7 +44,7 @@ export class EmployeeComponent implements OnInit {
       startDate: this.newStart,
       endDate: this.newEnd,
       numberOfDays: 0,
-      reason: this.newReason,
+      reason: 'Annual Leave',
       isApproved: false,
       isRejected: false,
       isWithdrawn: false,
@@ -95,7 +64,7 @@ export class EmployeeComponent implements OnInit {
   }
 
   retract(req: LeaveRequest): void {
-    this.leaveService.retractLeaveRequest(req.id).subscribe({
+    this.leaveService.retractLeaveRequest(req.id as unknown as string).subscribe({
       next: () => this.refresh(),
       error: err => {
         console.error(err);
@@ -103,4 +72,4 @@ export class EmployeeComponent implements OnInit {
       }
     });
   }
-} 
+}

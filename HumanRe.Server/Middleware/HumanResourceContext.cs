@@ -17,21 +17,18 @@ namespace HumanRe.Server.Middleware
         {
             base.OnModelCreating(modelBuilder);
 
-            // Employee - LeaveRequest (1-to-many)
             modelBuilder.Entity<LeaveRequest>()
                 .HasOne(lr => lr.Employee)
                 .WithMany(e => e.LeaveRequests)
                 .HasForeignKey(lr => lr.EmployeeId)
-                .OnDelete(DeleteBehavior.Restrict); // or Cascade if you prefer
+                .OnDelete(DeleteBehavior.Restrict); 
 
-            // Optional: ApprovedBy relationship
             modelBuilder.Entity<LeaveRequest>()
                 .HasOne(lr => lr.ApprovedBy)
                 .WithMany()
                 .HasForeignKey(lr => lr.ApprovedById)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Optional: LeaveType relationship
             modelBuilder.Entity<LeaveRequest>()
                 .HasOne(lr => lr.LeaveType)
                 .WithMany()

@@ -1,0 +1,54 @@
+.employee-container {
+    display: flex;
+    gap: 2rem;
+    padding: 1rem;
+  }
+  
+  .leave-list, .leave-form {
+    flex: 1;
+    background: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  
+  .leave-list h2, .leave-form h2 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  button {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background: #0056b3;
+  }
+  
+  .error {
+    color: red;
+    margin: 0.5rem 0;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  form label {
+    margin-top: 0.5rem;
+  }
+  
+  form input {
+    margin-bottom: 0.5rem;
+    padding: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  

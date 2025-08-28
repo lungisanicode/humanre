@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LeaveService } from '../../services/leave';
-import { LeaveRequest } from '../../interfaces/LeaveRequest';
-import { AuthService } from '../../services/auth';
+import { LeaveService } from '../../../services/leave';
+import { LeaveRequest } from '../../../interfaces/LeaveRequest';
+import { AuthService } from '../../../services/auth';
 
 @Component({
   selector: 'app-manager',

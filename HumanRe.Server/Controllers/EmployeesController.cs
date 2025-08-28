@@ -34,7 +34,7 @@ public class EmployeesController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("leave-requests/{id}")]
+    [HttpPost("leave-requests/{id}")]
     public async Task<IActionResult> RetractLeaveRequest(string id)
     {
         await _employeeRepository.RetractLeaveRequestAsync(id);
