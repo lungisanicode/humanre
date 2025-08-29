@@ -1,17 +1,16 @@
 
---IF DB_ID('HumanResource') IS NOT NULL
---BEGIN
---    ALTER DATABASE HumanResource SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
---    DROP DATABASE HumanResource;
---END
---GO
+IF DB_ID('HumanResource') IS NOT NULL
+BEGIN
+    ALTER DATABASE HumanResource SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE HumanResource;
+END
+GO
 
 CREATE DATABASE HumanResource;
 GO
 
 IF OBJECT_ID('LeaveRequests', 'U') IS NOT NULL DROP TABLE LeaveRequests;
 IF OBJECT_ID('PublicHolidays', 'U') IS NOT NULL DROP TABLE PublicHolidays;
-IF OBJECT_ID('LeaveTypes', 'U') IS NOT NULL DROP TABLE LeaveTypes;
 IF OBJECT_ID('Employees', 'U') IS NOT NULL DROP TABLE Employees;
 IF OBJECT_ID('Teams', 'U') IS NOT NULL DROP TABLE Teams;
 GO
@@ -42,20 +41,9 @@ CREATE TABLE Employees (
 );
 GO
  
-CREATE TABLE LeaveTypes (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    Name NVARCHAR(50) NOT NULL,
-    Description NVARCHAR(255) NULL,
-    IsActive BIT NOT NULL DEFAULT 1,
-    CreatedDate DATETIME2 DEFAULT GETDATE(),
-    ModifiedDate DATETIME2 DEFAULT GETDATE()
-);
-GO
- 
 CREATE TABLE LeaveRequests (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     EmployeeId INT NOT NULL,
-    LeaveTypeId INT NOT NULL,
     StartDate DATE NOT NULL,
     EndDate DATE NOT NULL,
     NumberOfDays INT NOT NULL,
@@ -69,7 +57,6 @@ CREATE TABLE LeaveRequests (
     RejectionReason NVARCHAR(500) NULL,
     
     CONSTRAINT FK_LeaveRequests_Employees FOREIGN KEY (EmployeeId) REFERENCES Employees(Id),
-    CONSTRAINT FK_LeaveRequests_LeaveTypes FOREIGN KEY (LeaveTypeId) REFERENCES LeaveTypes(Id),
     CONSTRAINT FK_LeaveRequests_ApprovedBy FOREIGN KEY (ApprovedById) REFERENCES Employees(Id),
     CONSTRAINT CHK_EndDateAfterStartDate CHECK (EndDate >= StartDate)
 );
@@ -119,16 +106,6 @@ INSERT INTO Employees (Id, FullName, EmailAddress, CellphoneNumber, TeamId, IsMa
 (1013, 'Rudy Lewis', 'rudylewis@acme.com', NULL, 3, 0, 0, 2),
 (1015, 'Neal French', 'nealfrench@acme.com', '+27 20 919 4882', 3, 0, 0, 2);
 GO
- 
-INSERT INTO LeaveTypes (Name, Description) VALUES
-('Annual Leave', 'Paid time off work'),
-('Sick Leave', 'Leave for illness or medical appointments'),
-('Family Responsibility', 'Leave for family-related responsibilities'),
-('Maternity Leave', 'Leave for childbirth and childcare'),
-('Paternity Leave', 'Leave for new fathers'),
-('Unpaid Leave', 'Leave without pay');
-GO
- 
 
 INSERT INTO PublicHolidays (Name, HolidayDate, Year) VALUES
 ('New Year''s Day', '2025-01-01', 2025),
@@ -159,3 +136,8 @@ GO
 UPDATE e SET e.ManagerEmail = m.EmailAddress FROM Employees e
 LEFT JOIN Employees m ON e.ManagerId = m.Id;
 GO
+
+ALTER TABLE LeaveRequests
+ADD IsApproved BIT NOT NULL DEFAULT 0,
+    IsRejected BIT NOT NULL DEFAULT 0,
+    IsWithdrawn BIT NOT NULL DEFAULT 0;
